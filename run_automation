@@ -1,0 +1,105 @@
+#!/bin/bash
+# set -xv
+
+type_options="config provision remove"
+platform_options="local aws iris"
+env_options="cntlm local ns801 ns901 ns201"
+
+usage() {
+printf "
+Usage: %s -t TYPE -p PLATFORM -e ENVIRONMENT
+
+Options:
+ -t                 Type of script we are running
+ -p                 Platform that we are running the scripts on
+ -e                 Environment that we are running the scripts against
+
+Type (-t):
+  config            Prepare the inventory for the specified environment
+  provision         Run the ansible installation scripts against the specified environment
+  remove            Run the ansible uninstallation scripts against the specified environment
+
+Platforms (-p):
+  local             Used when running on a local VM
+  aws               Used when running within aws
+  iris              Used when running within iris
+
+Environments (-e):
+  cntlm             Used when running on a local VM and using cntlm
+  local             Used when running on a local VM without cntlm
+  ns801             Used within the iris DevTest Domain
+  ns901             Used within the iris Managed Domain
+  ns201             Used within the iris Production Domain
+\n" "${0}";
+exit 1;
+}
+contains() { [[ ! -z "${2}" && "${1}" =~ (^|[[:space:]])${2}($|[[:space:]]) ]] && return 0  || return 1; }
+
+
+if [[ $1 == "" ]]; then
+  usage;
+else
+
+  while getopts ":t:p:e:" opt
+  do
+      case "${opt}" in
+         "t")
+              t=${OPTARG}
+              contains "${type_options}" "${t}" || usage
+              ;;
+          "p")
+              p=${OPTARG}
+              contains "${platform_options}" "${p}" || usage
+              ;;
+          "e")
+              e=${OPTARG}
+              contains "${env_options}" "${e}" || usage
+              ;;
+          ":")
+              printf "\nError: Option ${OPTARG} requires an argument\n"
+              usage
+              exit 1
+              ;;
+          "?")
+              printf "\nError: Unknown option -$OPTARG \n"
+              usage
+              exit 1
+              ;;
+          *)
+              usage
+              ;;
+      esac
+  done
+
+  shift $((OPTIND-1))
+
+fi
+
+if [[ -z ${t} || -z ${p} || -z ${e} ]]; then
+  printf "\nError: One or more options has not been set\n"
+  usage;
+  exit 1;
+else
+
+  BASEDIR=${PWD}
+
+  case ${t} in
+       config)  cat ${BASEDIR}/provisioning/inventory/inventory-${e}.orig >${BASEDIR}/provisioning/inventory/inventory;
+                echo "Inventory file recreated."
+                ;;
+    provision)  pushd ./provisioning/${p};
+                ansible-playbook playbook_pre_reqs.yaml              -e "PLATFORM=${p}"    -e "ENVIRONMENT=${e}"
+                ansible-playbook playbook_test.yaml                -e "PLATFORM=${p}"    -e "ENVIRONMENT=${e}"
+                #ansible-playbook playbook_nexus.yaml                 -e "PLATFORM=${p}"    -e "ENVIRONMENT=${e}"
+	        #ansible-playbook playbook_nginx.yaml                 -e "PLATFORM=${p}"    -e "ENVIRONMENT=${e}"
+                popd;
+                ;;
+       remove)  pushd ./provisioning/${p};
+                #ansible-playbook playbook_proxy_uninstall.yaml       -e "PLATFORM=${p}"    -e "ENVIRONMENT=${e}"
+                popd;
+                ;;
+            *)  echo "MAJOR ISSUE:  Is this even going to come up??";
+                ;;
+  esac
+fi
+

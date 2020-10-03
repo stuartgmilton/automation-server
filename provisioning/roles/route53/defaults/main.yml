@@ -1,7 +1,0 @@
----
-
- route53_records_to_add:    []
- route53_records_to_remove: []
-
-...
-

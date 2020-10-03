@@ -1,0 +1,21 @@
+---
+
+ - name: playbook_pre_reqs
+   hosts: "{{ ENVIRONMENT }}"
+   become: true
+   gather_facts: true
+
+   environment:
+     http_proxy: "{{ lookup('env', 'http_proxy') }}"
+     https_proxy: "{{ lookup('env', 'https_proxy') }}"
+     no_proxy: "{{ lookup('env', 'no_proxy') }}"
+
+   tasks:
+   - name: Install yum pre_reqs
+     yum:
+       state: present
+       name:
+         "{{ yum_packages }}"
+       enablerepo: "{{enable_repos|default(omit)}}"
+
+...

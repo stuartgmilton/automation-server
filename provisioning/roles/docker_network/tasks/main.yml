@@ -1,9 +1,0 @@
----
-
- - name: create
-   docker_network:
-     name: "{{ item }}"
-   with_items:
-     - "{{ docker_networks }}"
-
-...

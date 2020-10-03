@@ -1,0 +1,16 @@
+---
+
+ - name: TEST
+   hosts: "{{ ENVIRONMENT }}" 
+   become: true
+
+   roles:
+   - role: firewall
+     firewall_ports:
+     - { port: 80, proto: tcp, state: enabled }
+     - { port: 443, proto: tcp, state: enabled }
+   - role: docker   
+  # - role: docker_network
+  # - role: nginx
+
+...

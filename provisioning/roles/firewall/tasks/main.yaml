@@ -14,9 +14,6 @@
        enabled: true
        state: started
 
-
-
-
  - name: set firewall | configure firewall services
    when: (item.service is defined)
    firewalld:
