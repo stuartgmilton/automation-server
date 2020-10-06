@@ -1,0 +1,43 @@
+---
+
+ - name: playbook_nginx
+   hosts: "{{ ENVIRONMENT }}"
+   become: true
+   gather_facts: true
+
+   environment:
+     http_proxy: "{{ lookup('env', 'http_proxy') }}"
+     https_proxy: "{{ lookup('env', 'https_proxy') }}"
+     no_proxy: "{{ lookup('env', 'no_proxy') }}"
+
+   tasks:
+   - include_role:
+       name: firewall
+     vars:
+       firewall_ports:
+       - { port: 80,  proto: tcp, state: enabled }
+       - { port: 443, proto: tcp, state: enabled }
+
+   - name: Ensure group "nginx" exists
+     group:
+       name: nginx
+       gid: 101
+       state: present
+
+   - name: Ensure user "nginx" exists
+     user:
+       name: nginx
+       comment: NGinx User - Added by Ansible
+       uid: 101
+       group: "nginx"
+
+   - name:
+     include_role:
+       name: docker_network
+
+   - name:  
+     include_role:
+       name: nginx
+
+...
+

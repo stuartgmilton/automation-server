@@ -91,7 +91,7 @@ else
                 ansible-playbook playbook_pre_reqs.yaml              -e "PLATFORM=${p}"    -e "ENVIRONMENT=${e}"
                 ansible-playbook playbook_test.yaml                -e "PLATFORM=${p}"    -e "ENVIRONMENT=${e}"
                 #ansible-playbook playbook_nexus.yaml                 -e "PLATFORM=${p}"    -e "ENVIRONMENT=${e}"
-	        #ansible-playbook playbook_nginx.yaml                 -e "PLATFORM=${p}"    -e "ENVIRONMENT=${e}"
+	        ansible-playbook playbook_nginx.yaml                 -e "PLATFORM=${p}"    -e "ENVIRONMENT=${e}"
                 popd;
                 ;;
        remove)  pushd ./provisioning/${p};

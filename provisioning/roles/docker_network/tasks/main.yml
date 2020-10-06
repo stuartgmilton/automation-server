@@ -1,0 +1,9 @@
+---
+
+ - name: create/remove docker network
+   docker_network:
+     name: ci_suite
+     appends: yes
+
+...
+

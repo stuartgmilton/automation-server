@@ -9,8 +9,11 @@
  - vim
  - tree
 
- rhel_rpms_repo: rhui-REGION-rhel-server-releases
- rhel_extra_rpms_repo: rhui-REGION-rhel-server-extras
+# rhel_rpms_repo: rhui-REGION-rhel-server-releases
+ #rhel_extra_rpms_repo: rhui-REGION-rhel-server-extras
+
+ rhel_extra_rpms_repo: rhui-rhel-7-server-rhui-extras-rpms
+ rhel_rpms_repo: rhui-rhel-7-server-rhui-rpms
 
  rhel_repo_list:
  - "{{ rhel_rpms_repo }}"
