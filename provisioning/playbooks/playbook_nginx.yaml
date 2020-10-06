@@ -31,6 +31,16 @@
        uid: 101
        group: "nginx"
 
+   - name: Install yum pre_reqs
+     yum:
+       state: present
+       name: python2-pip
+       enablerepo: "{{enable_repos|default(omit)}}"
+
+   - name: pip docker
+     pip:
+       name: docker
+
    - name:
      include_role:
        name: docker_network
